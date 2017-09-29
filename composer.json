@@ -21,5 +21,16 @@
        "psr-4": {
             "Bregananta\\Blockchain\\": "src/"
         }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Bregananta\\Blockchain\\BlockchainServiceProvider"
+            ],
+            "aliases": {
+                "Blockchain": "Bregananta\\Blockchain\\BlockchainFacade"
+            }
+        }
     }
 }
