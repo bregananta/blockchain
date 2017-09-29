@@ -1,0 +1,23 @@
+{
+    "name": "bregananta/blockchain",
+    "description": "Blockchain for Laravel",
+    "keywords": ["blockchain", "laravel"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kunto Bregananta Adi",
+            "email": "bregananta@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "blockchain/blockchain": ">=1.4.0"
+    },
+    "autoload": {
+        "classmap": [],
+        "psr-0": {
+            "Bregananta\\Blockchain\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
