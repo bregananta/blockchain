@@ -8,7 +8,8 @@ class Blockchain {
 
     protected $config, $curl, $curlResponse;
 
-    public function __construct(Config $config){
+    public function __construct(Config $config)
+    {
         $this->config = $config;
     }
 
@@ -16,7 +17,8 @@ class Blockchain {
      * @param $block
      * @return mixed
      */
-    public function block($block){
+    public function block($block)
+    {
         $blockchainResponse = $this->callBlockchain('block-index/' . $block, 'GET', array('format' => 'json'));
 
         if( ! $response = json_decode($blockchainResponse))
@@ -30,7 +32,8 @@ class Blockchain {
      * @param $tx
      * @return mixed
      */
-    public function tx($tx){
+    public function tx($tx)
+    {
         $blockchainResponse = $this->callBlockchain('tx-index/' . $tx, 'GET', array('format' => 'json'));
 
         if( ! $response = json_decode($blockchainResponse))
@@ -46,7 +49,8 @@ class Blockchain {
      * @param bool $offset
      * @return mixed
      */
-    public function address($address, $limit = false, $offset = false){
+    public function address($address, $limit = false, $offset = false)
+    {
         $settings = array('format' => 'json');
 
         if($limit && $limit > 0)
@@ -68,7 +72,8 @@ class Blockchain {
      * @param array $addresses
      * @return mixed
      */
-    public function multiAddress($addresses = array()){
+    public function multiAddress($addresses = array())
+    {
         $blockchainResponse = $this->callBlockchain('multiaddr', 'GET', array(
             'format' => 'json',
             'active' => (is_array($address) ? implode('|', $address) : $address)
@@ -85,7 +90,8 @@ class Blockchain {
      * @param $address
      * @return mixed
      */
-    public function unspentOutputs($address){
+    public function unspentOutputs($address)
+    {
         $blockchainResponse = $this->callBlockchain('unspent', 'GET', array(
             'format' => 'json',
             'active' => (is_array($address) ? implode('|', $address) : $address)
@@ -101,7 +107,8 @@ class Blockchain {
      * get unconfirmed transactions
      * @return mixed
      */
-    public function unconfirmedTxs(){
+    public function unconfirmedTxs()
+    {
         $blockchainResponse = $this->callBlockchain('unconfirmed-transactions', 'GET', array(
             'format' => 'json'
             ));
@@ -116,7 +123,8 @@ class Blockchain {
      * ticker
      * @return mixed
      */
-    public function ticker(){
+    public function ticker()
+    {
         $blockchainResponse = $this->callBlockchain('ticker', 'GET', array(
             'format' => 'json'
             ));
@@ -133,7 +141,8 @@ class Blockchain {
      * @param string $currency
      * @return mixed
      */
-    public function toBTC($amount, $currency = 'USD'){
+    public function toBTC($amount, $currency = 'USD')
+    {
         $currencies = explode('|', 'USD|ISK|HKD|TWD|CHF|EUR|DKK|CLP|CAD|CNY|THB|AUD|SGD|KRW|JPY|PLN|GBP|SEK|NZD|BRL|RUB');
 
         $blockchainResponse = $this->callBlockchain('tobtc', 'GET', array(
@@ -153,7 +162,8 @@ class Blockchain {
      * @param $type
      * @return bool|mixed
      */
-    public function chart($type){
+    public function chart($type)
+    {
         if( ! in_array($type, array(
             'total-bitcoins',
             'market-cap',
@@ -202,7 +212,8 @@ class Blockchain {
      * get statistic (in JSON)
      * @return mixed
      */
-    public function stats(){
+    public function stats()
+    {
         $blockchainResponse = $this->callBlockchain('stats', 'GET', array(
             'format' => 'json',
             ));
@@ -221,7 +232,8 @@ class Blockchain {
      * @param bool $email
      * @return mixed
      */
-    public function createWallet($password, $privateKey = false, $label = false, $email = false){
+    public function createWallet($password, $privateKey = false, $label = false, $email = false)
+    {
         $settings = array('password' => $password);
 
         if($privateKey && $privateKey != '')
@@ -241,13 +253,26 @@ class Blockchain {
         return $response;
     }
 
+    public function receive($callback, $gap_limit)
+    {
+        $settings = array('gap_limit' => $gap_limit);
+
+        $blockchainResponse = $this->callBlockchain('v2/receive/' . $callback, 'GET', $settings);
+
+        if( ! $response = json_decode($blockchainResponse))
+            return $blockchainResponse;
+
+        return $response;
+    }
+
     /**
      * query API
      * @param $func
      * @param $params
      * @return mixed
      */
-    function __call($func, $params){
+    function __call($func, $params)
+    {
         if(in_array($func, array(
             'getdifficulty',
             'getblockcount',
@@ -304,7 +329,8 @@ class Blockchain {
      * @param array $params
      * @return mixed
      */
-    public function callBlockchain($url, $type = 'GET', $params = array()){
+    public function callBlockchain($url, $type = 'GET', $params = array())
+    {
         $curl = curl_init();
 
         $settings = array();
