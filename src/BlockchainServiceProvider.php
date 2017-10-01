@@ -9,7 +9,8 @@ class BlockchainServiceProvider extends ServiceProvider {
     /**
      * boot the service provider
      */
-    public function boot(){
+    public function boot()
+    {
         $this->publishes([
             __DIR__ . '/config/config.php' => config_path('blockchain.php'),
         ]);

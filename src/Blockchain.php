@@ -2,15 +2,12 @@
 
 namespace Bregananta\Blockchain;
 
-use Illuminate\Config\Repository as Config;
-
 class Blockchain {
 
     protected $config, $curl, $curlResponse;
 
-    public function __construct(Config $config)
+    public function __construct()
     {
-        $this->config = $config;
     }
 
     /**
@@ -19,7 +16,7 @@ class Blockchain {
      */
     public function block($block)
     {
-        $blockchainResponse = $this->callBlockchain('block-index/' . $block, 'GET', array('format' => 'json'));
+        $blockchainResponse = $this->callBlockchain('block-index/' . $block, 'GET', ['format' => 'json']);
 
         if( ! $response = json_decode($blockchainResponse))
             return $blockchainResponse;
@@ -34,7 +31,7 @@ class Blockchain {
      */
     public function tx($tx)
     {
-        $blockchainResponse = $this->callBlockchain('tx-index/' . $tx, 'GET', array('format' => 'json'));
+        $blockchainResponse = $this->callBlockchain('tx-index/' . $tx, 'GET', ['format' => 'json']);
 
         if( ! $response = json_decode($blockchainResponse))
             return $blockchainResponse;
@@ -51,7 +48,9 @@ class Blockchain {
      */
     public function address($address, $limit = false, $offset = false)
     {
-        $settings = array('format' => 'json');
+        $settings = [
+            'format' => 'json'
+        ];
 
         if($limit && $limit > 0)
             $settings['limit'] = $limit;
@@ -74,10 +73,10 @@ class Blockchain {
      */
     public function multiAddress($addresses = array())
     {
-        $blockchainResponse = $this->callBlockchain('multiaddr', 'GET', array(
-            'format' => 'json',
-            'active' => (is_array($address) ? implode('|', $address) : $address)
-            ));
+        $blockchainResponse = $this->callBlockchain('multiaddr', 'GET', [
+                'format' => 'json',
+                'active' => (is_array($addresses) ? implode('|', $addresses) : $addresses)
+            ]);
 
         if( ! $response = json_decode($blockchainResponse))
             return $blockchainResponse;
@@ -92,10 +91,10 @@ class Blockchain {
      */
     public function unspentOutputs($address)
     {
-        $blockchainResponse = $this->callBlockchain('unspent', 'GET', array(
-            'format' => 'json',
-            'active' => (is_array($address) ? implode('|', $address) : $address)
-            ));
+        $blockchainResponse = $this->callBlockchain('unspent', 'GET', [
+                'format' => 'json',
+                'active' => (is_array($address) ? implode('|', $address) : $address)
+            ]);
 
         if( ! $response = json_decode($blockchainResponse))
             return $blockchainResponse;
@@ -109,9 +108,7 @@ class Blockchain {
      */
     public function unconfirmedTxs()
     {
-        $blockchainResponse = $this->callBlockchain('unconfirmed-transactions', 'GET', array(
-            'format' => 'json'
-            ));
+        $blockchainResponse = $this->callBlockchain('unconfirmed-transactions', 'GET', ['format' => 'json']);
 
         if( ! $response = json_decode($blockchainResponse))
             return $blockchainResponse;
@@ -125,9 +122,7 @@ class Blockchain {
      */
     public function ticker()
     {
-        $blockchainResponse = $this->callBlockchain('ticker', 'GET', array(
-            'format' => 'json'
-            ));
+        $blockchainResponse = $this->callBlockchain('ticker', 'GET', ['format' => 'json']);
 
         if( ! $response = json_decode($blockchainResponse))
             return $blockchainResponse;
@@ -145,11 +140,11 @@ class Blockchain {
     {
         $currencies = explode('|', 'USD|ISK|HKD|TWD|CHF|EUR|DKK|CLP|CAD|CNY|THB|AUD|SGD|KRW|JPY|PLN|GBP|SEK|NZD|BRL|RUB');
 
-        $blockchainResponse = $this->callBlockchain('tobtc', 'GET', array(
-            'format' => 'json',
-            'currency' => in_array($currency, $currencies) ? $currency : 'USD',
-            'value' => intval($amount)
-            ));
+        $blockchainResponse = $this->callBlockchain('tobtc', 'GET', [
+                'format' => 'json',
+                'currency' => in_array($currency, $currencies) ? $currency : 'USD',
+                'value' => intval($amount)
+            ]);
 
         if( ! $response = json_decode($blockchainResponse))
             return $blockchainResponse;
@@ -164,7 +159,7 @@ class Blockchain {
      */
     public function chart($type)
     {
-        if( ! in_array($type, array(
+        if( ! in_array($type, [
             'total-bitcoins',
             'market-cap',
             'transaction-fees',
@@ -195,12 +190,10 @@ class Blockchain {
             'my-wallet-transaction-volume',
             'my-wallet-n-users',
             'my-wallet-n-tx'
-            )))
+            ]))
             return false;
 
-        $blockchainResponse = $this->callBlockchain('charts/' . $type, 'GET', array(
-            'format' => 'json',
-            ));
+        $blockchainResponse = $this->callBlockchain('charts/' . $type, 'GET', ['format' => 'json']);
 
         if( ! $response = json_decode($blockchainResponse))
             return $blockchainResponse;
@@ -214,9 +207,7 @@ class Blockchain {
      */
     public function stats()
     {
-        $blockchainResponse = $this->callBlockchain('stats', 'GET', array(
-            'format' => 'json',
-            ));
+        $blockchainResponse = $this->callBlockchain('stats', 'GET', ['format' => 'json']);
 
         if( ! $response = json_decode($blockchainResponse))
             return $blockchainResponse;
@@ -253,18 +244,6 @@ class Blockchain {
         return $response;
     }
 
-    public function receive($callback, $gap_limit)
-    {
-        $settings = array('gap_limit' => $gap_limit);
-
-        $blockchainResponse = $this->callBlockchain('v2/receive/' . $callback, 'GET', $settings);
-
-        if( ! $response = json_decode($blockchainResponse))
-            return $blockchainResponse;
-
-        return $response;
-    }
-
     /**
      * query API
      * @param $func
@@ -273,7 +252,7 @@ class Blockchain {
      */
     function __call($func, $params)
     {
-        if(in_array($func, array(
+        if(in_array($func, [
             'getdifficulty',
             'getblockcount',
             'latesthash',
@@ -310,10 +289,8 @@ class Blockchain {
             'hashpubkey',
             'addrpubkey',
             'pubkeyaddr'
-            ))){
-            $blockchainResponse = $this->callBlockchain('q/' . strtolower($func) . (is_array($params) ? '/' . $params[0] : ''), 'GET', array(
-                'format' => 'json'
-                ));
+            ])) {
+            $blockchainResponse = $this->callBlockchain('q/' . strtolower($func) . (is_array($params) ? '/' . $params[0] : ''), 'GET', ['format' => 'json']);
 
             if( ! $response = json_decode($blockchainResponse))
                 return $blockchainResponse;
@@ -335,11 +312,11 @@ class Blockchain {
 
         $settings = array();
 
-        if($this->config['cors'] == true)
+        if(config('blockchain.cors') == true)
             $params['cors'] = true;
 
-        if($this->config['api_secret'] != '')
-            $params['api_code'] = $this->config['api_secret'];
+        if(config('api_secret') != '')
+            $params['api_code'] = config('blockchain.api_secret');
 
         if($type == 'GET'){
             $settings[CURLOPT_RETURNTRANSFER] = true;
@@ -355,6 +332,36 @@ class Blockchain {
 
         $response = curl_exec($curl);
         curl_close($curl);
+
+        return $response;
+    }
+
+    /**
+     * @param $callback
+     * @param $gap_limit
+     * @return mixed
+     */
+    public function receive($callback, $gap_limit)
+    {
+        $curl = curl_init();
+
+        $params = [
+            'xpub' => config('blockchain.xpub'),
+            'callback' => $callback,
+            'key' => config('blockchain.api_secret'),
+            'gap_limit' => $gap_limit
+        ];
+
+        $settings[CURLOPT_RETURNTRANSFER] = true;
+        $settings[CURLOPT_URL] = 'http://api.blockchain.info/v2/receive?' . http_build_query($params);
+
+        curl_setopt_array($curl, $settings);
+
+        $blockchainResponse = curl_exec($curl);
+        curl_close($curl);
+
+        if( ! $response = json_decode($blockchainResponse))
+            return $blockchainResponse;
 
         return $response;
     }
